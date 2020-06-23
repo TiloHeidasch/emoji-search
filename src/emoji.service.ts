@@ -54,17 +54,17 @@ export class EmojiService {
     if (relevanceFactor === undefined) {
       relevanceFactor = 1;
     }
-    if (emoji.name === search) {
+    if (emoji.name.toLowerCase() === search.toLowerCase()) {
       return relevanceFactor * 1;
     }
-    if (emoji.name.includes(search)) {
+    if (emoji.name.toLowerCase().includes(search.toLowerCase())) {
       return relevanceFactor * 0.8
     }
     emoji.keywords.forEach(keyword => {
-      if (keyword === search) {
+      if (keyword.toLowerCase() === search.toLowerCase()) {
         return relevanceFactor * 0.75;
       }
-      if (keyword.includes(search)) {
+      if (keyword.toLowerCase().includes(search.toLowerCase())) {
         return relevanceFactor * 0.75 * 0.8;
       }
     });
