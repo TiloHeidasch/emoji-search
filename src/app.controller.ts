@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Logger } from '@nestjs/common';
+import { Controller, Get, Query, Logger, Header } from '@nestjs/common';
 import { EmojiService } from './emoji.service';
 import { Emoji } from './emoji';
 import { ApiQuery, ApiResponse } from '@nestjs/swagger';
@@ -17,6 +17,7 @@ export class AppController {
   @ApiQuery({ name: 'max', description: 'Maximum amount of results', required: false, example: 15 })
   @ApiQuery({ name: 'minRelevance', description: 'The minimum required relevance - 1 is most relevant, 0 is least relevant', required: false, example: 0.3 })
   @ApiResponse({ description: 'The emojis, determined by the given criteria', type: [Emoji] })
+  @Header('Access-Control-Allow-Origin', '*')
   async getEmojis(@Query('lang') lang?: Language, @Query('search') search?: string, @Query('max') max?: number, @Query('minRelevance') minRelevance?: number): Promise<Emoji[]> {
     const start = new Date();
     const id = uuid();
