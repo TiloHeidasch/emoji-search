@@ -24,5 +24,6 @@ WORKDIR /home/emoji-search
 
 COPY --from=0 /home/emoji-search/node_modules ./node_modules
 COPY --from=0 /home/emoji-search/dist ./dist
+COPY --from=0 /home/emoji-search/data ./data
 
 CMD node dist/main.js
