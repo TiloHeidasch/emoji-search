@@ -14,7 +14,7 @@ export class AppController {
   @ApiQuery({ name: 'max', description: 'Maximum amount of results', required: false, example: 15 })
   @ApiQuery({ name: 'minRelevance', description: 'The minimum required relevance - 1 is most relevant, 0 is least relevant', required: false, example: 0.3 })
   @ApiResponse({ description: 'The emojis, determined by the given criteria', type: [Emoji] })
-  getEmojis(@Query('lang') lang?: Language, @Query('search') search?: string, @Query('max') max?: number, @Query('minRelevance') minRelevance?: number): Promise<Emoji[]> {
+  async getEmojis(@Query('lang') lang?: Language, @Query('search') search?: string, @Query('max') max?: number, @Query('minRelevance') minRelevance?: number): Promise<Emoji[]> {
     return this.emojiService.getEmojis(lang, search, max, minRelevance);
   }
 }

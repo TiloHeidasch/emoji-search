@@ -6,20 +6,15 @@ import { exists, readFile } from 'fs';
 
 @Injectable()
 export class EmojiService {
+  private readonly filePathCn = 'data/emojis_cn.json';
+  private readonly filePathDe = 'data/emojis_de.json';
   private readonly filePathEn = 'data/emojis_en.json';
-  private readonly filePathDe = 'data/emojis_en.json';
+  private readonly filePathFr = 'data/emojis_fr.json';
+  private readonly filePathRu = 'data/emojis_ru.json';
   private readonly logger = new Logger(EmojiService.name);
   async getEmojis(lang?: Language, search?: string, max?: number, minRelevance?: number): Promise<Emoji[]> {
     const file = await this.loadFile(lang);
-    const emojis: Emoji[] = [];
-    Object.keys(file).forEach((k) => {
-      emojis.push({
-        name: k,
-        char: file[k].char,
-        category: file[k].category,
-        keywords: file[k].keywords,
-      });
-    });
+    const emojis: Emoji[] = this.fileToEmojis(file);
     if (max === undefined) {
       max = emojis.length;
     }
@@ -31,6 +26,18 @@ export class EmojiService {
     } else {
       return emojis.slice(0, max);
     }
+  }
+  fileToEmojis(file: Record<string, { char, category, keywords, fitzpatrick_scale }>): Emoji[] {
+    const emojis: Emoji[] = [];
+    Object.keys(file).forEach((k) => {
+      emojis.push({
+        name: k,
+        char: file[k].char,
+        category: file[k].category,
+        keywords: file[k].keywords,
+      });
+    });
+    return emojis;
   }
   private filterEmojis(emojis: Emoji[], search: string, minRelevance: number): Emoji[] {
     const filteredEmojis: Emoji[] = [];
@@ -66,10 +73,25 @@ export class EmojiService {
     }
     return 0;
   }
-  private async loadFile(lang?: Language): Promise<Record<string, { char, category, keywords, fitzpatrick_scale }>> {
+  private async loadFile(lang: Language): Promise<Record<string, { char, category, keywords, fitzpatrick_scale }>> {
     let filePath = '';
     switch (lang) {
-      default:
+      case Language.cn:
+        filePath = this.filePathCn;
+        break;
+      case Language.de:
+        filePath = this.filePathDe;
+        break;
+      case Language.en:
+        filePath = this.filePathEn;
+        break;
+      case Language.fr:
+        filePath = this.filePathFr;
+        break;
+      case Language.ru:
+        filePath = this.filePathRu;
+        break;
+      case undefined:
         filePath = this.filePathEn;
         break;
     }
@@ -80,7 +102,7 @@ export class EmojiService {
         const emojis = buffer.toString();
         return emojis ? JSON.parse(emojis) : {};
       } else {
-        console.log('file does not exist');
+        this.logger.error({ error: 'File does not exist', filePath });
         return {};
       }
     } catch (error) {
